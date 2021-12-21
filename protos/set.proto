@@ -1,0 +1,51 @@
+syntax="proto3";
+
+option go_package = "libs;question";
+import "protos/datetime.proto";
+import "protos/type.proto";
+
+message Set {
+  reserved 1;
+  reserved "id";
+  Time time = 2;
+  Type type = 3;
+  uint32 created_by_id = 4;
+  Date created_date= 5;
+  Date updated_date = 6;
+  bool active = 7;
+}
+
+message CreateSetRequest {
+  Set set = 1;
+}
+message CreateSetResponse {
+  Set set = 1;
+}
+
+message UpdateSetRequest {
+  Set set = 1;
+  uint32 id = 2;
+}
+message UpdateSetResponse {
+  Set set = 1;
+}
+
+message ListSetRequest {}
+message ListSetResponse {
+  repeated Set set = 1;
+}
+
+message RetrieveSetRequest {
+  uint32 id = 1;
+}
+message RetrieveSetResponse {
+  Set set = 1;
+}
+
+message DeleteSetRequest {
+  uint32 id = 1;
+}
+message DeleteSetResponse {
+  bool success = 1;
+  string response = 2;
+}
