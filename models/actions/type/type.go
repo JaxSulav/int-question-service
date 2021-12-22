@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 	"log"
 	question "questionService/libs"
+	"questionService/models"
 	"time"
 )
 
@@ -62,4 +63,32 @@ func List(db *sql.DB) (*sql.Rows, error) {
 		return nil, err
 	}
 	return rows, nil
+}
+
+func Retrieve(db *sql.DB, oid uint32) (*question.Type, error) {
+	query := "SELECT * FROM type WHERE id=?"
+	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	row := models.Dbclient.QueryRow(query, oid)
+
+	var typeItem = question.Type{}
+	var id *uint32
+	er := row.Scan(&id, &typeItem.Name, &typeItem.CreatedById, &typeItem.CreatedDate, &typeItem.UpdatedDate, &typeItem.Active)
+	if er != nil {
+		log.Printf("Error when getting the object %v", er.Error())
+		return nil, er
+	}
+	return &typeItem, nil
+}
+
+func Delete(db *sql.DB, oid uint32) error {
+	query := "DELETE FROM type WHERE id=?"
+	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := db.Exec(query, oid)
+	if err != nil {
+		return err
+	}
+	return err
 }

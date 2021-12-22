@@ -8,6 +8,7 @@ import (
 	question "questionService/libs"
 	"questionService/models"
 	"questionService/models/actions/type"
+	"strconv"
 )
 
 func (*Server) CreateType(ctx context.Context, req *question.CreateTypeRequest) (*question.CreateTypeResponse, error) {
@@ -75,6 +76,31 @@ func (*Server) ListType(ctx context.Context, req *question.ListTypeRequest) (*qu
 
 	response := &question.ListTypeResponse{
 		Type: responses,
+	}
+	return response, nil
+}
+
+func (*Server) RetrieveType(ctx context.Context, req *question.RetrieveTypeRequest) (*question.RetrieveTypeResponse, error) {
+	oid := req.GetId()
+	res, err := _type.Retrieve(models.Dbclient, oid)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to retrieve: %v", err.Error())
+	}
+	response := &question.RetrieveTypeResponse{Type: res}
+	return response, nil
+}
+
+func (*Server) DeleteType(ctx context.Context, req *question.DeleteTypeRequest) (*question.DeleteTypeResponse, error) {
+	oid := req.GetId()
+
+	err := _type.Delete(models.Dbclient, oid)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Unable to delete: %v", err)
+	}
+	res := "Successfully deleted item with id: " + strconv.Itoa(int(oid))
+	response := &question.DeleteTypeResponse{
+		Success:  true,
+		Response: res,
 	}
 	return response, nil
 }

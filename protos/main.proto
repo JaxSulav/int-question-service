@@ -29,8 +29,16 @@ service QuestionService {
       get: "/api/v1/type"
     };
   }
-  rpc RetrieveType (RetrieveTypeRequest) returns (RetrieveTypeResponse){}
-  rpc DeleteType (DeleteTypeRequest) returns (DeleteTypeResponse){}
+  rpc RetrieveType (RetrieveTypeRequest) returns (RetrieveTypeResponse){
+    option (google.api.http) = {
+      get: "/api/v1/type/{id}"
+    };
+  }
+  rpc DeleteType (DeleteTypeRequest) returns (DeleteTypeResponse){
+    option (google.api.http) = {
+      delete: "/api/v1/type/{id}"
+    };
+  }
 
   // Question
   rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse){}
