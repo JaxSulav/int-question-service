@@ -18,8 +18,17 @@ service QuestionService {
       body: "*"
     };
   }
-  rpc UpdateType (UpdateTypeRequest) returns (UpdateTypeResponse){}
-  rpc ListType (ListTypeRequest) returns (ListTypeResponse){}
+  rpc UpdateType (UpdateTypeRequest) returns (UpdateTypeResponse){
+    option (google.api.http) = {
+      put: "/api/v1/type/{id}"
+      body: "*"
+    };
+  }
+  rpc ListType (ListTypeRequest) returns (ListTypeResponse){
+    option (google.api.http) = {
+      get: "/api/v1/type"
+    };
+  }
   rpc RetrieveType (RetrieveTypeRequest) returns (RetrieveTypeResponse){}
   rpc DeleteType (DeleteTypeRequest) returns (DeleteTypeResponse){}
 
