@@ -1,7 +1,7 @@
 syntax="proto3";
 
-option go_package = "libs;question";
-import "protos/datetime.proto";
+option go_package = "./libs;question";
+import "datetime.proto";
 
 message Question {
   reserved 1;

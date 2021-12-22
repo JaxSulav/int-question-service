@@ -2,38 +2,42 @@ syntax="proto3";
 
 package questionService;
 
-option go_package = "libs;question";
+option go_package = "./libs;question";
 
-import "protos/question.proto";
-import "protos/questionset.proto";
-import "protos/type.proto";
-import "protos/set.proto";
+import "question.proto";
+import "questionset.proto";
+import "type.proto";
+import "set.proto";
+import "google/api/annotations.proto";
 
 service QuestionService {
+  // Type
+  rpc CreateType (CreateTypeRequest) returns (CreateTypeResponse){
+    option (google.api.http) = {
+      post: "/api/v1/type"
+      body: "*"
+    };
+  }
+  rpc UpdateType (UpdateTypeRequest) returns (UpdateTypeResponse){}
+  rpc ListType (ListTypeRequest) returns (ListTypeResponse){}
+  rpc RetrieveType (RetrieveTypeRequest) returns (RetrieveTypeResponse){}
+  rpc DeleteType (DeleteTypeRequest) returns (DeleteTypeResponse){}
+
+  // Question
   rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse){}
   rpc UpdateQuestion (UpdateQuestionRequest) returns (UpdateQuestionResponse){}
   rpc ListQuestion (ListQuestionRequest) returns (ListQuestionResponse){}
   rpc RetrieveQuestion (RetrieveQuestionRequest) returns (RetrieveQuestionResponse){}
   rpc DeleteQuestion (DeleteQuestionRequest) returns (DeleteQuestionResponse){}
-}
 
-service TypeService {
-  rpc CreateType (CreateTypeRequest) returns (CreateTypeResponse){}
-  rpc UpdateType (UpdateTypeRequest) returns (UpdateTypeResponse){}
-  rpc ListType (ListTypeRequest) returns (ListTypeResponse){}
-  rpc RetrieveType (RetrieveTypeRequest) returns (RetrieveTypeResponse){}
-  rpc DeleteType (DeleteTypeRequest) returns (DeleteTypeResponse){}
-}
-
-service SetService {
+  // Set
   rpc CreateSet (CreateSetRequest) returns (CreateSetResponse){}
   rpc UpdateSet (UpdateSetRequest) returns (UpdateSetResponse){}
   rpc ListSet (ListSetRequest) returns (ListSetResponse){}
   rpc RetrieveSet (RetrieveSetRequest) returns (RetrieveSetResponse){}
   rpc DeleteSet (DeleteSetRequest) returns (DeleteSetResponse){}
-}
 
-service QuestionSetService {
+  // QuestionSet
   rpc CreateQuestionSet (CreateQuestionSetRequest) returns (CreateQuestionSetResponse){}
   rpc UpdateQuestionSet (UpdateQuestionSetRequest) returns (UpdateQuestionSetResponse){}
   rpc ListQuestionSet (ListQuestionSetRequest) returns (ListQuestionSetResponse){}
