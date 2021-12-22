@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-var Dbclient = models.DbConn()
-
 func CreateTypeTable() error {
 	query := `CREATE TABLE IF NOT EXISTS type(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
@@ -22,11 +20,11 @@ func CreateTypeTable() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := Dbclient.ExecContext(ctx, query)
+	_, err := models.Dbclient.ExecContext(ctx, query)
 	if err != nil {
 		return err
 	}
-	log.Printf("Table %v created", "type")
+	log.Printf("Table %v created", "methods")
 	return nil
 }
 
@@ -44,7 +42,7 @@ func CreateQuestionTable() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := Dbclient.ExecContext(ctx, query)
+	_, err := models.Dbclient.ExecContext(ctx, query)
 	if err != nil {
 		return err
 	}
@@ -67,7 +65,7 @@ func CreateQsetTable() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := Dbclient.ExecContext(ctx, query)
+	_, err := models.Dbclient.ExecContext(ctx, query)
 	if err != nil {
 		return err
 	}
@@ -90,7 +88,7 @@ func CreateQuestionQsetTable() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := Dbclient.ExecContext(ctx, query)
+	_, err := models.Dbclient.ExecContext(ctx, query)
 	if err != nil {
 		return err
 	}

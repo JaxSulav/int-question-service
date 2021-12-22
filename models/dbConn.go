@@ -20,3 +20,5 @@ func DbConn() (db *sql.DB) {
 	db.SetMaxIdleConns(10)
 	return db
 }
+
+var Dbclient = DbConn()

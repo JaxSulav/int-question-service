@@ -1,15 +1,14 @@
 syntax="proto3";
 
 option go_package = "./libs;question";
-import "datetime.proto";
 
 message Type {
   reserved 1;
   reserved "id";
   string name = 2;
   uint32 created_by_id = 3;
-  Date created_date = 4;
-  Date updated_date = 5;
+  string created_date = 4;
+  string updated_date = 5;
   bool active = 6;
 }
 

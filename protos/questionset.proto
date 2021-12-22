@@ -2,7 +2,6 @@ syntax="proto3";
 
 option go_package = "./libs;question";
 import "question.proto";
-import "datetime.proto";
 import "set.proto";
 
 message QuestionSet {
@@ -11,8 +10,8 @@ message QuestionSet {
   repeated Question question = 2;
   Set set = 3;
   uint32 created_by_id = 4;
-  Date created_date = 5;
-  Date updated_date = 6;
+  string created_date = 5;
+  string updated_date = 6;
 }
 
 message CreateQuestionSetRequest {

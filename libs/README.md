@@ -11,6 +11,4 @@ These libs are auto generated interfaces used by grpc servers. Do not modify the
 * `cd ../protos`
 * `buf generate --error-format=json`
 
-
-####`Note:`
-#### - If you want to build using protoc, please refer to [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway#usage) usages section for further instructions. ####
+### Note: If you want to build using protoc, please refer to [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway#usage) usages section for further instructions. ###

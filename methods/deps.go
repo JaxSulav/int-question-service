@@ -1,4 +1,4 @@
-package actions
+package methods
 
 import question "questionService/libs"
 

@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"questionService/actions"
 	gw "questionService/libs"
 	question "questionService/libs"
+	"questionService/methods"
 )
 
 const (
@@ -28,7 +28,7 @@ func StartGrpcServer() {
 	}
 
 	s := grpc.NewServer()
-	question.RegisterQuestionServiceServer(s, &actions.Server{})
+	question.RegisterQuestionServiceServer(s, &methods.Server{})
 	reflection.Register(s)
 
 	log.Printf("Listening grpc at : %v", lis.Addr())
@@ -63,7 +63,7 @@ func main() {
 		// mux
 		mux := runtime.NewServeMux()
 		// register
-		err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &actions.Server{})
+		err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &methods.Server{})
 		if err != nil {
 			panic(err.Error())
 		}
