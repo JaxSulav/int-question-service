@@ -1,4 +1,4 @@
-package main
+package tables
 
 import (
 	"context"
@@ -8,6 +8,27 @@ import (
 )
 
 var Dbclient = models.DbConn()
+
+func CreateTypeTable() error {
+	query := `CREATE TABLE IF NOT EXISTS type(
+				id INT PRIMARY KEY AUTO_INCREMENT, 
+				name TEXT,
+				created_by_id INT,
+				created_date DATE,
+				updated_date DATE,
+				active BOOLEAN
+			)`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := Dbclient.ExecContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	log.Printf("Table %v created", "type")
+	return nil
+}
 
 func CreateQuestionTable() error {
 	query := `CREATE TABLE IF NOT EXISTS question(
@@ -25,20 +46,21 @@ func CreateQuestionTable() error {
 
 	_, err := Dbclient.ExecContext(ctx, query)
 	if err != nil {
-		log.Printf("Error %s when creating product table", err)
 		return err
 	}
 	log.Printf("Table %v created", "question")
 	return nil
 }
 
-func CreateQuestionSetTable() error {
-	query := `CREATE TABLE IF NOT EXISTS questionset(
+func CreateQsetTable() error {
+	query := `CREATE TABLE IF NOT EXISTS qset(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
-				set_id INT,
-				created_by_id INT,
+				time TIME,
+				type_id INT,
+				FOREIGN KEY (type_id) REFERENCES type(id) ON DELETE CASCADE,
 				created_date DATE,
-				updated_date DATE
+				updated_date DATE,
+				active BOOLEAN
 			)`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -46,20 +68,22 @@ func CreateQuestionSetTable() error {
 
 	_, err := Dbclient.ExecContext(ctx, query)
 	if err != nil {
-		log.Printf("Error %s when creating product table", err)
 		return err
 	}
-	log.Printf("Table %v created", "questionset")
+	log.Printf("Table %v created", "qset")
 	return nil
 }
 
-func CreateQuestionMtmQuestionSetTable() error {
-	query := `CREATE TABLE IF NOT EXISTS question_questionset(
+func CreateQuestionQsetTable() error {
+	query := `CREATE TABLE IF NOT EXISTS question_qset(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
 				question_id INT,
-				questionset_id INT,
-				FOREIGN KEY (question_id) REFERENCES questionset(id) ON DELETE CASCADE,
-				FOREIGN KEY (questionset_id) REFERENCES question(id) ON DELETE CASCADE
+				qset_id INT,
+				created_by_id INT,
+				created_date DATE,
+				updated_date DATE,
+				FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE,
+				FOREIGN KEY (qset_id) REFERENCES qset(id) ON DELETE CASCADE
 			)`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -67,9 +91,8 @@ func CreateQuestionMtmQuestionSetTable() error {
 
 	_, err := Dbclient.ExecContext(ctx, query)
 	if err != nil {
-		log.Printf("Error %s when creating product table", err)
 		return err
 	}
-	log.Printf("Table %v created", "question_questionset")
+	log.Printf("Table %v created", "question_qset")
 	return nil
 }
