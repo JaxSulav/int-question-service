@@ -12,7 +12,7 @@ var Dbclient = models.DbConn()
 func CreateTypeTable() error {
 	query := `CREATE TABLE IF NOT EXISTS type(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
-				name TEXT,
+				name VARCHAR(120),
 				created_by_id INT,
 				created_date DATE,
 				updated_date DATE,
@@ -33,7 +33,7 @@ func CreateTypeTable() error {
 func CreateQuestionTable() error {
 	query := `CREATE TABLE IF NOT EXISTS question(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
-				title TEXT,
+				title VARCHAR(200),
        			content TEXT, 
 				created_by_id INT,
 				created_date DATE,
@@ -55,6 +55,7 @@ func CreateQuestionTable() error {
 func CreateQsetTable() error {
 	query := `CREATE TABLE IF NOT EXISTS qset(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
+				name VARCHAR(120),
 				time TIME,
 				type_id INT,
 				FOREIGN KEY (type_id) REFERENCES type(id) ON DELETE CASCADE,
