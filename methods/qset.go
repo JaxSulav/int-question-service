@@ -5,7 +5,7 @@ import (
 	"log"
 	question "questionService/libs"
 	"questionService/models"
-	"questionService/models/actions/qset"
+	_qset "questionService/models/actions/qset"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,7 +26,7 @@ func (*Server) CreateSet(ctx context.Context, req *question.CreateSetRequest) (*
 		QsName:      reqData.GetQsName(),
 	}
 
-	_, err := qset.Insert(models.Dbclient, &data)
+	_, err := _qset.Insert(models.Dbclient, &data)
 	if err != nil {
 		log.Printf("Insert item failed with error %s", err)
 		return nil, err
@@ -50,7 +50,7 @@ func (*Server) UpdateSet(ctx context.Context, req *question.UpdateSetRequest) (*
 	}
 	oid := req.GetId()
 
-	err := qset.Update(models.Dbclient, &data, oid)
+	err := _qset.Update(models.Dbclient, &data, oid)
 	if err != nil {
 		return nil, err
 	}
@@ -59,15 +59,13 @@ func (*Server) UpdateSet(ctx context.Context, req *question.UpdateSetRequest) (*
 }
 
 func (*Server) ListSet(ctx context.Context, req *question.ListSetRequest) (*question.ListSetResponse, error) {
-	rows, err := qset.List(models.Dbclient)
+	rows, err := _qset.List(models.Dbclient)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Unexpected Error Occurred: %v", err)
 	}
-	var i *uint32
 	var responses []*question.Set
 	defer func() {
 		responses = nil
-		i = nil
 	}()
 
 	for rows.Next() {
@@ -88,7 +86,7 @@ func (*Server) ListSet(ctx context.Context, req *question.ListSetRequest) (*ques
 
 func (*Server) RetrieveSet(ctx context.Context, req *question.RetrieveSetRequest) (*question.RetrieveSetResponse, error) {
 	oid := req.GetId()
-	res, err := qset.Retrieve(models.Dbclient, oid)
+	res, err := _qset.Retrieve(models.Dbclient, oid)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to retrieve: %v", err.Error())
 	}
@@ -99,7 +97,7 @@ func (*Server) RetrieveSet(ctx context.Context, req *question.RetrieveSetRequest
 func (*Server) DeleteSet(ctx context.Context, req *question.DeleteSetRequest) (*question.DeleteSetResponse, error) {
 	oid := req.GetId()
 
-	err := qset.Delete(models.Dbclient, oid)
+	err := _qset.Delete(models.Dbclient, oid)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Unable to delete: %v", err)
 	}

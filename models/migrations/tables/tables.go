@@ -24,7 +24,7 @@ func CreateTypeTable() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Table %v created", "methods")
+	log.Printf("Table %v created", "type")
 	return nil
 }
 
@@ -36,7 +36,9 @@ func CreateQuestionTable() error {
 				created_by_id INT,
 				created_date DATE,
 				updated_date DATE,
-				active BOOLEAN
+				active BOOLEAN,
+				type_id INT,
+				FOREIGN KEY (type_id) REFERENCES type(id) ON DELETE CASCADE
 			)`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

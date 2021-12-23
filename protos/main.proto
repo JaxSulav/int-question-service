@@ -41,11 +41,33 @@ service QuestionService {
   }
 
   // Question
-  rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse){}
-  rpc UpdateQuestion (UpdateQuestionRequest) returns (UpdateQuestionResponse){}
-  rpc ListQuestion (ListQuestionRequest) returns (ListQuestionResponse){}
-  rpc RetrieveQuestion (RetrieveQuestionRequest) returns (RetrieveQuestionResponse){}
-  rpc DeleteQuestion (DeleteQuestionRequest) returns (DeleteQuestionResponse){}
+  rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse){
+    option (google.api.http) = {
+      post: "/api/v1/question"
+      body: "*"
+    };
+  }
+  rpc UpdateQuestion (UpdateQuestionRequest) returns (UpdateQuestionResponse){
+    option (google.api.http) = {
+      put: "/api/v1/question/{id}"
+      body: "*"
+    };
+  }
+  rpc ListQuestion (ListQuestionRequest) returns (ListQuestionResponse){
+    option (google.api.http) = {
+      get: "/api/v1/question"
+    };
+  }
+  rpc RetrieveQuestion (RetrieveQuestionRequest) returns (RetrieveQuestionResponse){
+    option (google.api.http) = {
+      get: "/api/v1/question/{id}"
+    };
+  }
+  rpc DeleteQuestion (DeleteQuestionRequest) returns (DeleteQuestionResponse){
+    option (google.api.http) = {
+      delete: "/api/v1/question/{id}"
+    };
+  }
 
   // Set
   rpc CreateSet (CreateSetRequest) returns (CreateSetResponse){

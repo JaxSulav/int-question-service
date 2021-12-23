@@ -11,6 +11,7 @@ message Question {
   string created_date = 5;
   string updated_date = 6;
   bool active = 7;
+  uint32 type = 8;
 }
 
 message CreateQuestionRequest {
