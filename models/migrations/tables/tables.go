@@ -53,10 +53,11 @@ func CreateQuestionTable() error {
 func CreateQsetTable() error {
 	query := `CREATE TABLE IF NOT EXISTS qset(
 				id INT PRIMARY KEY AUTO_INCREMENT, 
-				name VARCHAR(120),
+				qs_name VARCHAR(120),
 				time TIME,
 				type_id INT,
 				FOREIGN KEY (type_id) REFERENCES type(id) ON DELETE CASCADE,
+				created_by_id INT,
 				created_date DATE,
 				updated_date DATE,
 				active BOOLEAN

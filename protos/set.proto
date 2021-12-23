@@ -1,17 +1,17 @@
 syntax="proto3";
 
 option go_package = "./libs;question";
-import "type.proto";
 
 message Set {
   reserved 1;
   reserved "id";
   string time = 2;
-  Type type = 3;
+  uint32 type = 3;
   uint32 created_by_id = 4;
   string created_date= 5;
   string updated_date = 6;
   bool active = 7;
+  string qs_name = 8;
 }
 
 message CreateSetRequest {

@@ -48,11 +48,33 @@ service QuestionService {
   rpc DeleteQuestion (DeleteQuestionRequest) returns (DeleteQuestionResponse){}
 
   // Set
-  rpc CreateSet (CreateSetRequest) returns (CreateSetResponse){}
-  rpc UpdateSet (UpdateSetRequest) returns (UpdateSetResponse){}
-  rpc ListSet (ListSetRequest) returns (ListSetResponse){}
-  rpc RetrieveSet (RetrieveSetRequest) returns (RetrieveSetResponse){}
-  rpc DeleteSet (DeleteSetRequest) returns (DeleteSetResponse){}
+  rpc CreateSet (CreateSetRequest) returns (CreateSetResponse){
+    option (google.api.http) = {
+      post: "/api/v1/qset"
+      body: "*"
+    };
+  }
+  rpc UpdateSet (UpdateSetRequest) returns (UpdateSetResponse){
+    option (google.api.http) = {
+      put: "/api/v1/qset/{id}"
+      body: "*"
+    };
+  }
+  rpc ListSet (ListSetRequest) returns (ListSetResponse){
+    option (google.api.http) = {
+      get: "/api/v1/qset"
+    };
+  }
+  rpc RetrieveSet (RetrieveSetRequest) returns (RetrieveSetResponse){
+    option (google.api.http) = {
+      get: "/api/v1/qset/{id}"
+    };
+  }
+  rpc DeleteSet (DeleteSetRequest) returns (DeleteSetResponse){
+    option (google.api.http) = {
+      delete: "/api/v1/qset/{id}"
+    };
+  }
 
   // QuestionSet
   rpc CreateQuestionSet (CreateQuestionSetRequest) returns (CreateQuestionSetResponse){}
