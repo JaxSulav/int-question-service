@@ -11,6 +11,7 @@ import "set.proto";
 import "google/api/annotations.proto";
 
 service QuestionService {
+  
   // Type
   rpc CreateType (CreateTypeRequest) returns (CreateTypeResponse){
     option (google.api.http) = {
@@ -39,6 +40,7 @@ service QuestionService {
       delete: "/api/v1/type/{id}"
     };
   }
+
 
   // Question
   rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse){
@@ -69,6 +71,7 @@ service QuestionService {
     };
   }
 
+
   // Set
   rpc CreateSet (CreateSetRequest) returns (CreateSetResponse){
     option (google.api.http) = {
@@ -98,10 +101,34 @@ service QuestionService {
     };
   }
 
+
   // QuestionSet
-  rpc CreateQuestionSet (CreateQuestionSetRequest) returns (CreateQuestionSetResponse){}
-  rpc UpdateQuestionSet (UpdateQuestionSetRequest) returns (UpdateQuestionSetResponse){}
-  rpc ListQuestionSet (ListQuestionSetRequest) returns (ListQuestionSetResponse){}
-  rpc RetrieveQuestionSet (RetrieveQuestionSetRequest) returns (RetrieveQuestionSetResponse){}
-  rpc DeleteQuestionSet (DeleteQuestionSetRequest) returns (DeleteQuestionSetResponse){}
+  rpc CreateQuestionSet (CreateQuestionSetRequest) returns (CreateQuestionSetResponse){
+    option (google.api.http) = {
+      post: "/api/v1/question-qset"
+      body: "*"
+    };
+  }
+  rpc UpdateQuestionSet (UpdateQuestionSetRequest) returns (UpdateQuestionSetResponse){
+    option (google.api.http) = {
+      put: "/api/v1/question-qset/{id}"
+      body: "*"
+    };
+  }
+  rpc ListQuestionSet (ListQuestionSetRequest) returns (ListQuestionSetResponse){
+    option (google.api.http) = {
+      get: "/api/v1/question-qset"
+    };
+  }
+  rpc RetrieveQuestionSet (RetrieveQuestionSetRequest) returns (RetrieveQuestionSetResponse){
+    option (google.api.http) = {
+      get: "/api/v1/question-qset/{id}"
+    };
+  }
+  rpc DeleteQuestionSet (DeleteQuestionSetRequest) returns (DeleteQuestionSetResponse){
+    option (google.api.http) = {
+      delete: "/api/v1/question-qset/{id}"
+    };
+  }
+
 }
