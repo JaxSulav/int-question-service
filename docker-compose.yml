@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3307:3306
+    expose:
+      - 3306
+    environment:
+      MYSQL_DATABASE: interviewPortal
+      MYSQL_USER: interviewUser
+      MYSQL_PASSWORD: Changeme1!
+      MYSQL_ROOT_PASSWORD: Changeme1!
+    volumes:
+      - .dbdata:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    container_name: interviewPortal_db
+  question_service:
+    command: bash -c "go run models/migrations/main.go && go run server.go"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+    expose:
+      - 8000
+      - 50051
+    depends_on:
+      - db
+    container_name: interviewQuestionService
