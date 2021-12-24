@@ -27,6 +27,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/usr/src/app
+    ports:
+      - 8000:8000
     expose:
       - 8000
       - 50051
