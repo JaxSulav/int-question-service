@@ -1,19 +1,10 @@
 module questionService
 
-go 1.17
+go 1.16
 
 require github.com/go-sql-driver/mysql v1.6.0
 
-require google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa
-
-require (
-	github.com/golang/glog v1.0.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
-)
+require google.golang.org/genproto v0.0.0-20211222154725-9823f7ba7562
 
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2
