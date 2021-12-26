@@ -10,7 +10,7 @@ func DbConn() (db *sql.DB) {
 	dbUser := "interviewUser"
 	dbPass := "Changeme1!"
 	dbName := "interviewPortal"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp(db:3306)/"+dbName)
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp(localhost:3306)/"+dbName)
 	if err != nil {
 		panic(err.Error())
 	}

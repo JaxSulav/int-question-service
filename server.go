@@ -4,7 +4,10 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 	"log"
 	"net"
 	"net/http"
@@ -20,6 +23,11 @@ const (
 	restPort = "0.0.0.0:8000"
 )
 
+func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	log.Printf("--> unary interceptor: %v", info.FullMethod)
+	return handler(ctx, req)
+}
+
 func StartGrpcServer() {
 	lis, err := net.Listen("tcp", grpcPort)
 
@@ -27,7 +35,9 @@ func StartGrpcServer() {
 		log.Fatalf("Error in starting server %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(AuthInterceptor),
+	)
 	question.RegisterQuestionServiceServer(s, &methods.Server{})
 	reflection.Register(s)
 
@@ -53,6 +63,12 @@ func StartGrpcServer() {
 	log.Println("Server Stopped.")
 }
 
+func callAuthService(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
+	log.Println("--> unary interceptor auth")
+	return status.Errorf(codes.Unauthenticated, "Could not authenticate...")
+	//return nil
+}
+
 func main() {
 	log.Println("Starting Question Service...")
 	// Better logging with file names
@@ -61,7 +77,9 @@ func main() {
 	// Thread for grpc gateway REST Server
 	go func() {
 		// mux
-		mux := runtime.NewServeMux()
+		mux := runtime.NewServeMux(
+			runtime.WithForwardResponseOption(callAuthService),
+		)
 		// register
 		err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &methods.Server{})
 		if err != nil {
