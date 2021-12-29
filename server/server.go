@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -101,8 +102,9 @@ func StartGatewayServer() {
 				return
 			}
 			// Case: Invalid auth token, write message to response writer object
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
-			_, err = w.Write([]byte(err.Error()))
+			err = json.NewEncoder(w).Encode(map[string]string{"code": "16", "message": "Unauthorized User"})
 			if err != nil {
 				log.Printf("Error writing to response writer: %v", err)
 				return
