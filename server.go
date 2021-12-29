@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
 	"log"
 	"net"
 	"net/http"
@@ -19,7 +18,7 @@ import (
 )
 
 const (
-	grpcPort = "0.0.0.0:50051"
+	grpcPort = "0.0.0.0:50052"
 	restPort = "0.0.0.0:8000"
 )
 
@@ -63,10 +62,9 @@ func StartGrpcServer() {
 	log.Println("Server Stopped.")
 }
 
-func callAuthService(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
-	log.Println("--> unary interceptor auth")
+func dummyAuth(token string) error {
+	log.Printf("Token: %v", token)
 	return status.Errorf(codes.Unauthenticated, "Could not authenticate...")
-	//return nil
 }
 
 func main() {
@@ -77,17 +75,36 @@ func main() {
 	// Thread for grpc gateway REST Server
 	go func() {
 		// mux
-		mux := runtime.NewServeMux(
-			runtime.WithForwardResponseOption(callAuthService),
-		)
+		mux := runtime.NewServeMux()
 		// register
 		err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &methods.Server{})
 		if err != nil {
 			panic(err.Error())
 		}
-
+		gatewayAddr := "0.0.0.0:8000"
+		gwServer := &http.Server{
+			Addr: gatewayAddr,
+			// Handle authentication through auth interceptor
+			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				log.Println("->> Verifying Authentication")
+				bearer := r.Header.Get("Authorization")
+				// Call grpc auth server
+				err := dummyAuth(bearer)
+				if err == nil {
+					mux.ServeHTTP(w, r)
+					return
+				}
+				// Case: Invalid auth token, write message to response writer object
+				w.WriteHeader(http.StatusUnauthorized)
+				_, err = w.Write([]byte(err.Error()))
+				if err != nil {
+					log.Printf("Error weiting to response writer: %v", err)
+					return
+				}
+			}),
+		}
 		// http server
-		log.Fatalln(http.ListenAndServe(restPort, mux))
+		log.Fatalln(gwServer.ListenAndServe())
 	}()
 
 	StartGrpcServer()
