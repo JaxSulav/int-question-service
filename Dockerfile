@@ -1,6 +1,5 @@
 FROM golang:1.17-bullseye
 
-RUN cat /etc/issue
 RUN apt-get update
 
 ADD . /usr/src/app

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	authAddress = "localhost:50051"
+	authAddress = "192.168.0.110:50051"
 )
 
 func ConnectAuthClient() auth.AuthClient {

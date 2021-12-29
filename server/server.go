@@ -101,6 +101,7 @@ func StartGatewayServer() {
 				mux.ServeHTTP(w, r)
 				return
 			}
+			log.Printf("Error in Authentication: %v", err)
 			// Case: Invalid auth token, write message to response writer object
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)

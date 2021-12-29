@@ -13,8 +13,9 @@ services:
       MYSQL_USER: interviewUser
       MYSQL_PASSWORD: Changeme1!
       MYSQL_ROOT_PASSWORD: Changeme1!
-    volumes:
-      - .dbdata:/var/lib/mysql
+    # Done in prod to make a new db container using this volume
+    # volumes:
+    #  - .dbdata:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 20s
