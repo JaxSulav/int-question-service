@@ -21,17 +21,17 @@ services:
       retries: 10
     container_name: interviewPortal_db
   question_service:
-    command: bash -c "go run models/migrations/main.go && go run server.go"
+    command: bash -c "go run models/migrations/main.go && go run main.go"
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - .:/usr/src/app
     ports:
-      - 8000:8000
+      - 8080:8080
     expose:
-      - 8000
-      - 50051
+      - 8080
+      - 50052
     depends_on:
       - db
     container_name: interviewQuestionService

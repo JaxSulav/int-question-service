@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -20,12 +20,11 @@ import (
 )
 
 const (
-	grpcPort    = "0.0.0.0:50052"
-	gwRestPort  = "0.0.0.0:8080"
-	authAddress = "localhost:50051"
+	grpcPort   = "0.0.0.0:50052"
+	gwRestPort = "0.0.0.0:8080"
 )
 
-var authClient auth.AuthClient
+var AuthClient auth.AuthClient
 
 func GrpcAuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	log.Printf("--> unary interceptor: %v", info.FullMethod)
@@ -72,7 +71,7 @@ func GatewayAuthenticate(token string) error {
 	}
 	token = strings.ReplaceAll(token, "Bearer ", "")
 	req := &auth.TokenValidatorRequest{Bearer: token}
-	res, err := authClient.ValidateToken(context.Background(), req)
+	res, err := AuthClient.ValidateToken(context.Background(), req)
 	if err != nil {
 		return err
 	}
@@ -113,26 +112,4 @@ func StartGatewayServer() {
 	log.Printf("Listening gateway REST at : %v", gwRestPort)
 	// http server
 	log.Fatalln(gwServer.ListenAndServe())
-}
-
-func main() {
-	log.Println("Starting Question Service...")
-	// Better logging with file names
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
-	// Dial to the server address, the connection given by dial will be used to create a new calculator client
-	conn, err := grpc.Dial(authAddress, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Cannot connect to auth server %v \n", err)
-	}
-	// To call auth validation grpc
-	authClient = auth.NewAuthClient(conn)
-
-	// Thread for grpc gateway REST Server
-	go func() {
-		StartGatewayServer()
-	}()
-
-	// gRPC Server
-	StartGrpcServer()
 }

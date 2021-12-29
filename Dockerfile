@@ -16,5 +16,5 @@ RUN go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
 
 RUN apt install -y build-essential
 
-EXPOSE 8000
-EXPOSE 50051
+EXPOSE 8080
+EXPOSE 50052
