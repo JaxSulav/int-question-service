@@ -14,15 +14,20 @@ import (
 	"os/signal"
 	gw "questionService/libs"
 	question "questionService/libs"
+	"questionService/libs/auth"
 	"questionService/methods"
+	"strings"
 )
 
 const (
-	grpcPort = "0.0.0.0:50052"
-	restPort = "0.0.0.0:8000"
+	grpcPort    = "0.0.0.0:50052"
+	gwRestPort  = "0.0.0.0:8080"
+	authAddress = "localhost:50051"
 )
 
-func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+var authClient auth.AuthClient
+
+func GrpcAuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	log.Printf("--> unary interceptor: %v", info.FullMethod)
 	return handler(ctx, req)
 }
@@ -35,13 +40,12 @@ func StartGrpcServer() {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(AuthInterceptor),
+		grpc.UnaryInterceptor(GrpcAuthInterceptor),
 	)
 	question.RegisterQuestionServiceServer(s, &methods.Server{})
 	reflection.Register(s)
 
-	log.Printf("Listening grpc at : %v", lis.Addr())
-	log.Printf("Listening rest at : %v", restPort)
+	log.Printf("Listening gRPC at : %v", lis.Addr())
 
 	go func() {
 		if err := s.Serve(lis); err != nil {
@@ -62,9 +66,53 @@ func StartGrpcServer() {
 	log.Println("Server Stopped.")
 }
 
-func dummyAuth(token string) error {
-	log.Printf("Token: %v", token)
-	return status.Errorf(codes.Unauthenticated, "Could not authenticate...")
+func GatewayAuthenticate(token string) error {
+	if !strings.Contains(token, "Bearer") {
+		return status.Errorf(codes.InvalidArgument, "Invalid auth token format")
+	}
+	token = strings.ReplaceAll(token, "Bearer ", "")
+	req := &auth.TokenValidatorRequest{Bearer: token}
+	res, err := authClient.ValidateToken(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	if valid := res.Success; valid {
+		return nil
+	}
+	return status.Errorf(codes.Unauthenticated, res.Msg)
+}
+
+func StartGatewayServer() {
+	// mux
+	mux := runtime.NewServeMux()
+	// register
+	err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &methods.Server{})
+	if err != nil {
+		panic(err.Error())
+	}
+	gwServer := &http.Server{
+		Addr: gwRestPort,
+		// Handle authentication through auth interceptor
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			bearer := r.Header.Get("Authorization")
+			// Call grpc auth server
+			err := GatewayAuthenticate(bearer)
+			if err == nil {
+				mux.ServeHTTP(w, r)
+				return
+			}
+			// Case: Invalid auth token, write message to response writer object
+			w.WriteHeader(http.StatusUnauthorized)
+			_, err = w.Write([]byte(err.Error()))
+			if err != nil {
+				log.Printf("Error writing to response writer: %v", err)
+				return
+			}
+		}),
+	}
+	log.Printf("Listening gateway REST at : %v", gwRestPort)
+	// http server
+	log.Fatalln(gwServer.ListenAndServe())
 }
 
 func main() {
@@ -72,40 +120,19 @@ func main() {
 	// Better logging with file names
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
+	// Dial to the server address, the connection given by dial will be used to create a new calculator client
+	conn, err := grpc.Dial(authAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Cannot connect to auth server %v \n", err)
+	}
+	// To call auth validation grpc
+	authClient = auth.NewAuthClient(conn)
+
 	// Thread for grpc gateway REST Server
 	go func() {
-		// mux
-		mux := runtime.NewServeMux()
-		// register
-		err := gw.RegisterQuestionServiceHandlerServer(context.Background(), mux, &methods.Server{})
-		if err != nil {
-			panic(err.Error())
-		}
-		gatewayAddr := "0.0.0.0:8000"
-		gwServer := &http.Server{
-			Addr: gatewayAddr,
-			// Handle authentication through auth interceptor
-			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				log.Println("->> Verifying Authentication")
-				bearer := r.Header.Get("Authorization")
-				// Call grpc auth server
-				err := dummyAuth(bearer)
-				if err == nil {
-					mux.ServeHTTP(w, r)
-					return
-				}
-				// Case: Invalid auth token, write message to response writer object
-				w.WriteHeader(http.StatusUnauthorized)
-				_, err = w.Write([]byte(err.Error()))
-				if err != nil {
-					log.Printf("Error weiting to response writer: %v", err)
-					return
-				}
-			}),
-		}
-		// http server
-		log.Fatalln(gwServer.ListenAndServe())
+		StartGatewayServer()
 	}()
 
+	// gRPC Server
 	StartGrpcServer()
 }
