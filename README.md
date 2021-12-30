@@ -49,10 +49,21 @@
  $ go run models/migrations/main.go
 ```
 
-### SERVER
+## RUNNING SERVER
+### Using Go 
 ```
  $ go run main.go
 ```
+### Using Docker
+* Build docker image
+`
+ $ docker-compose build
+`
+######
+* Run container from image
+`
+ $ docker-compose up
+`
 
 ## Extras
 - [grpc-gateway](Docs/GRPC-GATEWAY.md)
