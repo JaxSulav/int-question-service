@@ -1,0 +1,5 @@
+version: "3"
+
+AuthAddress: 10.10.24.148:50051
+GrpcPort: 0.0.0.0:50052
+GwRestPort: 0.0.0.0:8080

@@ -13,16 +13,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"questionService/config"
 	gw "questionService/libs"
 	question "questionService/libs"
 	"questionService/libs/auth"
 	"questionService/methods"
 	"strings"
-)
-
-const (
-	grpcPort   = "0.0.0.0:50052"
-	gwRestPort = "0.0.0.0:8080"
 )
 
 var AuthClient auth.AuthClient
@@ -33,7 +29,7 @@ func GrpcAuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryS
 }
 
 func StartGrpcServer() {
-	lis, err := net.Listen("tcp", grpcPort)
+	lis, err := net.Listen("tcp", config.GrpcPort)
 
 	if err != nil {
 		log.Fatalf("Error in starting server %v", err)
@@ -91,7 +87,7 @@ func StartGatewayServer() {
 		panic(err.Error())
 	}
 	gwServer := &http.Server{
-		Addr: gwRestPort,
+		Addr: config.GwRestPort,
 		// Handle authentication through auth interceptor
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			bearer := r.Header.Get("Authorization")
@@ -112,7 +108,7 @@ func StartGatewayServer() {
 			}
 		}),
 	}
-	log.Printf("Listening gateway REST at : %v", gwRestPort)
+	log.Printf("Listening gateway REST at : %v", config.GwRestPort)
 	// http server
 	log.Fatalln(gwServer.ListenAndServe())
 }

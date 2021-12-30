@@ -16,10 +16,6 @@ services:
     # Done in prod to make a new db container using this volume
     # volumes:
     #  - .dbdata:/var/lib/mysql
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
     container_name: interviewPortal_db
   question_service:
     command: bash -c "go run models/migrations/main.go && go run main.go"

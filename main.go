@@ -3,17 +3,14 @@ package main
 import (
 	"google.golang.org/grpc"
 	"log"
+	"questionService/config"
 	"questionService/libs/auth"
 	"questionService/server"
 )
 
-const (
-	authAddress = "192.168.0.110:50051"
-)
-
 func ConnectAuthClient() auth.AuthClient {
 	// Dial to the server address, the connection given by dial will be used to create a new calculator client
-	conn, err := grpc.Dial(authAddress, grpc.WithInsecure())
+	conn, err := grpc.Dial(config.AuthAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Cannot connect to auth server %v \n", err)
 	}
