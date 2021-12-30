@@ -30,6 +30,7 @@
 ## INSTALLATION
 
 * (Optional) Install the protobuf compiler for your system, if you want to generate the native code yourself. Already generated code can be found under `libs` directory.
+
 ```
  $ export PATH="$PATH:$(go env GOPATH)/bin"
  $ go mod tidy -go=1.17`
@@ -39,10 +40,15 @@
     google.golang.org/protobuf/cmd/protoc-gen-go \
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ```
+
+## LIBS GENERATION
+* We use buf generator over protoc to generate native codes. Please refer [this](libs/README.md) for files generation process
+
 ## MIGRATIONS
 ```
  $ go run models/migrations/main.go
 ```
+
 ## RUNNING THE SERVER
 ```
  $ go run main.go
