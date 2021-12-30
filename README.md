@@ -1,4 +1,4 @@
-## GRPC Server for question service ##
+# GRPC Server for question service #
 
 ### PROTOS ###
 
@@ -27,7 +27,7 @@
 - Api exposed by grpc-gateway are authenticated by http Interceptors/HandlerFunc.
 - From both interceptors, we perform the rpc in `auth service grpc server` to authenticate the user.
 
-## INSTALLATION
+### INSTALLATION
 
 * (Optional) Install the protobuf compiler for your system, if you want to generate the native code yourself. Already generated code can be found under `libs` directory.
 
@@ -41,15 +41,15 @@
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ```
 
-## LIBS GENERATION
+### LIBS GENERATION
 * We use buf generator over protoc to generate native codes. Please refer [this](libs/README.md) for files generation process
 
-## MIGRATIONS
+### MIGRATIONS
 ```
  $ go run models/migrations/main.go
 ```
 
-## RUNNING THE SERVER
+### SERVER
 ```
  $ go run main.go
 ```
